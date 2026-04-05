@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cascade Engine</title>
+    <style>
+        body { font-family: Arial; max-width: 800px; margin: 50px auto; }
+        h1 { color: #0891b2; }
+        input, select, button { padding: 10px; margin: 5px; font-size: 16px; }
+        button { background: #0891b2; color: white; border: none; cursor: pointer; border-radius: 5px; }
+        button:hover { background: #0e7490; }
+        #result { margin-top: 30px; padding: 20px; background: #f0f0f0; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>🌊 Economic Cascade Engine</h1>
+    
+    <div>
+        <label>Economic Event:</label>
+        <input type="text" id="event" placeholder="e.g., LPG crisis" value="LPG crisis India 2026">
+    </div>
+    
+    <div>
+        <label>Magnitude:</label>
+        <select id="magnitude">
+            <option>Extreme (20%+)</option>
+            <option>Severe (10-20%)</option>
+            <option>Moderate (5-10%)</option>
+        </select>
+    </div>
+    
+    <div>
+        <label>Duration:</label>
+        <select id="duration">
+            <option>Prolonged (16+w)</option>
+            <option>Medium (8-16w)</option>
+            <option>Temporary (4-8w)</option>
+        </select>
+    </div>
+    
+    <button onclick="analyzeEvent()">⚡ Analyze Cascade</button>
+    
+    <div id="result"></div>
+    
+    <script>
+        async function analyzeEvent() {
+            const event = document.getElementById('event').value;
+            const magnitude = document.getElementById('magnitude').value;
+            const duration = document.getElementById('duration').value;
+            const resultDiv = document.getElementById('result');
+            
+            resultDiv.innerHTML = '<p>Loading...</p>';
+            
+            try {
+                const response = await fetch('/api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ event, magnitude, duration })
+                });
+                
+                const data = await response.json();
+                
+                if (data.analysis) {
+                    resultDiv.innerHTML = '<h3>Analysis:</h3><pre>' + data.analysis + '</pre>';
+                } else {
+                    resultDiv.innerHTML = '<p style="color:red;">Error: ' + (data.error || 'Unknown error') + '</p>';
+                }
+            } catch (err) {
+                resultDiv.innerHTML = '<p style="color:red;">Error: ' + err.message + '</p>';
+            }
+        }
+    </script>
+</body>
+</html>
